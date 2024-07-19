@@ -6,28 +6,9 @@ const cors = require('cors');
 require('dotenv').config();
 const session = require('express-session');
 
-const corsOptions = {
-    origin: 'http://localhost:5173', // React app URL
-    credentials: true, // to accept cookies from the client
-  };
-  
-  app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json());
 
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false, maxAge: 60000 * 60 * 24 * 7 } // 7 days
-}));
-
-app.get('/checkAuth', (req, res) => {
-    if (req.session.user) {
-      res.json({ authenticated: true });
-    } else {
-      res.json({ authenticated: false });
-    }
-  });
 
 const userRoutes = require('./routes/userRoutes');
 const roleRoutes = require('./routes/roleRoutes');

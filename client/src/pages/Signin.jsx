@@ -17,27 +17,28 @@ const Signin = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const onLogin = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        "http://localhost:8000/auth/login",
-        user
-      );
-      console.log(response.data);
+ const onLogin = async () => {
+   try {
+     setLoading(true);
+     const response = await axios.post(
+       "http://localhost:8000/auth/login",
+       user
+     );
+     console.log(response.data);
 
-      setLoading(false);
-      localStorage.setItem("userData", JSON.stringify(response.data));
-      toast.success("Login successful");
-      setAuthenticated(true);
-      navigate("/role-management");
-    } catch (error) {
-      setLoading(false);
-      toast.error(error?.message || "An error occurred");
-    } finally {
-      setButtonDisabled(false);
-    }
-  };
+     setLoading(false);
+     localStorage.setItem("userData", JSON.stringify(response.data));
+     toast.success("Login successful");
+     setAuthenticated(true);
+     navigate("/dashboard");
+   } catch (error) {
+     setLoading(false);
+     toast.error(error?.message || "An error occurred");
+   } finally {
+     setButtonDisabled(false);
+   }
+ };
+
 
   useEffect(() => {
     if (user.email.length > 0 && user.password.length > 0) {

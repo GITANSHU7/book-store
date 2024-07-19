@@ -23,13 +23,6 @@ exports.login = async (req, res) => {
         const payload = { userId: user._id };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        // Store user details in session
-        req.session.user = {
-            id: user._id,
-            email: user.email,
-            role: user.role
-        };
-
         res.json({
             message: 'Login successful', data: {
                 token,
@@ -40,7 +33,7 @@ exports.login = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        return res.status(500).json({ err: err.message });
+        return res.status(500).json({ err: err.message, });
     }
 }
 
@@ -101,14 +94,14 @@ exports.signup = async (req, res) => {
 }
 
 // signout user
+
 exports.signout = async (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to sign out' });
-        }
-        res.clearCookie('connect.sid'); // clears the cookie
-        res.json({
-            message: 'User signed out successfully'
-        });
-    });
+    try {
+        res.clearCookie('token');
+        res.json({ message: 'Signout successful' });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: err.message });
+    }
 }

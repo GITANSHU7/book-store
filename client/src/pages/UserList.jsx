@@ -16,6 +16,7 @@ import {
 } from "flowbite-react";
 import { tableTheme } from "../theme/tableTheme";
 import { modalTheme } from "../theme/modalTheme";
+import { hasMenuAccess } from "../utils/hasMenuAccess";
 
 const UserList = () => {
     const [data, setData] = useState([]);
@@ -31,6 +32,14 @@ const UserList = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [role, setRole] = useState("");
 
+      const store = JSON.parse(localStorage.getItem("userData") || "{}");
+      const userRole = store?.data?.user?.role;
+
+    //   if (!hasMenuAccess("User Management", userRole)) {
+    //     return <div>Access Denied</div>;
+    //   }
+      
+
     const userDetails = async () => {
         try {
             const store = JSON.parse(localStorage.getItem("userData") || "{}");
@@ -43,11 +52,11 @@ const UserList = () => {
             const response = await axios.post(
                 "http://localhost:8000/user/list",
                 null,
-                // {
-                //     headers: {
-                //         Authorization: `Bearer ${apiToken}`,
-                //     },
-                // }
+                 {
+                     headers: {
+                         Authorization: `Bearer ${apiToken}`,
+                     },
+                 }
             );
             setLoading(false);
             setData(response?.data?.data);
@@ -85,20 +94,21 @@ const UserList = () => {
     };
 
     useEffect(() => {
-        // const checkAuth = async () => {
-        //     try {
-        //         await userDetails();
+        const checkAuth = async () => {
+            try {
+                await userDetails();
                
 
-        //     } catch (error) {
-        //         console.error(error?.message || "Error in authentication check");
-        //     }
-        // };
+            } catch (error) {
+                console.error(error?.message || "Error in authentication check");
+            }
+        };
 
-        // checkAuth();
-        userDetails();
-    }, []);
+        checkAuth();
     
+    }, []);
+
+   
     useEffect(() => {
         roleList();           
     }, [editModalOpen]);
@@ -570,3 +580,4 @@ const UserList = () => {
     );
 };
 export default UserList;
+
