@@ -5,11 +5,15 @@ import { toast } from "react-hot-toast";
 import { Spinner } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/authSlice";
 
 const Signin = () => {
   const { authenticated, setAuthenticated } = useAuth();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -30,7 +34,9 @@ const Signin = () => {
      localStorage.setItem("userData", JSON.stringify(response.data));
      toast.success("Login successful");
      setAuthenticated(true);
-     navigate("/dashboard");
+     dispatch(setUserData(response.data));
+    //  window.location.href = "/dashboard";
+    navigate("/dashboard");
    } catch (error) {
      setLoading(false);
      toast.error(error?.message || "An error occurred");

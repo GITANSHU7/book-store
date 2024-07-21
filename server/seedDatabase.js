@@ -1,19 +1,19 @@
 const mongoose = require('mongoose');
-const User = require('./models/userModel');
-const Role = require('./models/roleModel');
+const User = require('./models/userModels');
+const Role = require('./models/roleModels');
 const bcrypt = require('bcryptjs');
 
 const seedDatabase = async () => {
-    await mongoose.connect('mongodb+srv://gitanshugautam7:r43VE2EfxSsmwyHk@cluster0.ubx8jbj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+    await mongoose.connect('mongodb+srv://gitanshugautam7:3JvFFn7oGOdXB1RV@server.fijuhih.mongodb.net/?retryWrites=true&w=majority&appName=server');
 
     const superadminRole = new Role({
         name: 'Superadmin',
-        menus: ['Dashboard', 'Profile', 'Settings', 'Reports', 'Notifications', 'User Management', 'Role Management', 'Book Management']
+        menus: ['Dashboard',  'User Management', 'Role Management', 'Book Management']
     });
 
     const userRole = new Role({
         name: 'User',
-        menus: ['Dashboard', 'Profile', 'Settings', 'Reports', 'Notifications']
+        menus: ['Dashboard']
     });
 
     await superadminRole.save();

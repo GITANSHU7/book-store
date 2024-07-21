@@ -28,13 +28,7 @@ const bookSchema = new mongoose.Schema({
         message: 'Publisher field is required',
         
     },
-   rating: {
-        type: Number,
-        required: true,
-        trim: true,
-        message: 'Rating field is required',
-        
-    },
+
     price: {
         type: Number,
         required: true,
@@ -42,7 +36,19 @@ const bookSchema = new mongoose.Schema({
         message: 'Price field is required',
         
     },
-
+    imageUrl: {
+        type: String,
+        required: true,
+        message: 'Image URL is required',
+    },
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    unlikes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' }
 }, { timestamps: true });
 

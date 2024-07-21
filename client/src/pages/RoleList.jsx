@@ -15,38 +15,45 @@ import { IoIosRefreshCircle } from "react-icons/io";
 import Select from 'react-select';
 import { modalTheme } from "../theme/modalTheme";
 import { tableTheme } from "../theme/tableTheme";
+import { useSelector } from "react-redux";
+import { hasMenuAccess } from "../utils/hasMenuAccess";
+import { useNavigate } from "react-router-dom";
 
 
 const RoleList = () => {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
- 
+    const navigation = useNavigate();
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [viewModalOpen, setViewModalOpen] = useState(false);
     const [roleView, setRoleView] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const [user, setUser] = useState("");
     const [assign, setAssign] = useState("");
     const [newRole, setNewRole] = useState({ name: "", menus: "" });
+    const { user } = useSelector((state) => state.auth);
+    const apiToken = user?.data?.token;
+    const userRole = user?.data?.user?.role;
+
+     // not authorized
+     useEffect(() => {
+        if (!hasMenuAccess("Role Management", userRole)) {
+            navigation("/not-authorized");
+        }
+    }, []);
 
     const menus = [
         { name: "User Management" },
         { name: "Role Management", },
         { name: "Book Management", },
-        { name: "Dashboard" },
-        { name: "Profile" },
-        { name: "Settings" },
-        { name: "Notifications" },
+        { name: "Dashboard" }
     ]
 
 
     const roleList = async () => {
         try {
-            const store = JSON.parse(localStorage.getItem("userData") || "{}");
-            const apiToken = store?.data?.token;
-            console.log(apiToken);
+           
             if (!apiToken) {
                 throw new Error("Missing authorization token");
             }
@@ -82,37 +89,11 @@ const RoleList = () => {
         checkAuth();
     }, []);
 
-    const UserList = async () => {
-        try {
-            const store = JSON.parse(localStorage.getItem("userData") || "{}");
-            const apiToken = store?.data?.token;
-            console.log(apiToken);
-            if (!apiToken) {
-                throw new Error("Missing authorization token");
-            }
-
-            const response = await axios.post(
-                "http://localhost:8000/user/list",
-                null,
-                {
-                    headers: {
-                        Authorization: `Bearer ${apiToken}`,
-                    },
-                }
-            );
-            setLoading(false);
-            setUser(response?.data?.data);
-        } catch (error) {
-            console.error(error.message || "Error fetching roles details");
-            throw error;
-        }
-    };
 
 
     const createRole = async () => {
         try {
-            const store = JSON.parse(localStorage.getItem("userData") || "{}");
-            const apiToken = store?.data?.token;
+            
             if (!apiToken) {
                 throw new Error("Missing authorization token");
             }
@@ -141,9 +122,7 @@ const RoleList = () => {
 
     const getRole = async (id) => {
         try {
-            const store = JSON.parse(localStorage.getItem("userData") || "{}");
-            const apiToken = store?.data?.token;
-            console.log(apiToken);
+           
             if (!apiToken) {
                 throw new Error("Missing authorization token");
             }

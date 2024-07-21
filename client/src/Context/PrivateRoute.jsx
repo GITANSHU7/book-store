@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import SideBar from "../conponents/SideBar";
-// import Sidebar from "../components/Sidebar";
-// import AppFooter from "../components/Footer";
+import AppFooter from "../conponents/Footer";
+
 
 const PrivateRoutes = () => {
   const { authenticated } = useAuth();
@@ -12,7 +12,7 @@ const PrivateRoutes = () => {
       <div className="min-h-screen">
         <Outlet />
       </div>
-      {/* <AppFooter /> */}
+      <AppFooter />
     </>
   ) : (
     <Navigate to="/signin" />

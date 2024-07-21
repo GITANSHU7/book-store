@@ -15,6 +15,7 @@ exports.login = async (req, res) => {
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.status(400).json({ error: "Invalid password" });
+            
         }
 
         const userDetails = await User.findOne({ email }).populate('role');

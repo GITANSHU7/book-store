@@ -5,10 +5,12 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 const session = require('express-session');
-
+const path = require('path');
 app.use(cors());
 app.use(bodyParser.json());
 
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const userRoutes = require('./routes/userRoutes');
 const roleRoutes = require('./routes/roleRoutes');
@@ -23,6 +25,7 @@ app.use('/book', bookRoutes)
 app.get('/', (req, res) => {
     res.send('Welcome to the lovoj API');
 });
+
 
 //save to database
 const port = process.env.PORT || 8000;

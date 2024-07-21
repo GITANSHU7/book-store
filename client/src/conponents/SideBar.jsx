@@ -1,78 +1,96 @@
 import axios from "axios";
 import {
-    Avatar,
-    Drawer,
-    Dropdown,
-    Navbar,
-    Sidebar,
-    TextInput
+  Avatar,
+  Drawer,
+  Dropdown,
+  Navbar,
+  Sidebar,
+  TextInput,
+  useThemeMode,
 } from "flowbite-react";
 import { useState } from "react";
 import { BiArrowFromLeft } from "react-icons/bi";
 import { CgMenuLeftAlt } from "react-icons/cg";
+import { FaRegSun } from "react-icons/fa";
 import {
-    HiClipboard,
-    HiCollection,
-    HiInformationCircle,
-    HiSearch
+  HiClipboard,
+  HiCollection,
+  HiInformationCircle,
+  HiSearch,
 } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { LuMoon } from "react-icons/lu";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
+import { clearUserData } from "../redux/authSlice";
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const { toggleMode, mode } = useThemeMode();
   const handleClose = () => setIsOpen(false);
 
-  // get login user data from AuthContext
-     const { authenticated, userDetails } = useAuth();
+  const { authenticated, userDetails, setUserDetails } = useAuth();
 
-    if (!authenticated) {
-        return null;
+  if (!authenticated) {
+    return null;
+  }
+
+  const onLogout = async () => {
+    try {
+      const apiToken = user?.data?.token;
+
+      if (!apiToken) {
+        throw new Error("Missing authorization token"); // Throw error if no token
+      }
+
+      const response = await axios.post(
+        "http://localhost:8000/auth/signout",
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${apiToken}`,
+          },
+        }
+      );
+      // on sucessful logout, remove the user data from local storage
+      localStorage.removeItem("userData");
+      clearUserData();
+      setUserDetails(null);
+      window.location.href = "/signin";
+    } catch (error) {
+      console.error(error.message || "Error fetching user details"); // Handle errors
     }
+  };
 
-     console.log(userDetails?.data?.user?.role?.menus, "sdfdfgfgsf");
-
-     const onLogout = async () => {
-      
-
-       try {
-         const apiToken = userDetails?.data?.token;
-
-         if (!apiToken) {
-           throw new Error("Missing authorization token"); // Throw error if no token
-         }
-
-         const response = await axios.post(
-           "http://localhost:8000/auth/signout",
-           null,
-           {
-             headers: {
-               Authorization: `Bearer ${apiToken}`,
-             },
-           }
-         );
-         // on sucessful logout, remove the user data from local storage
-         localStorage.removeItem("userData");
-         window.location.href = "/signin";
-       } catch (error) {
-         console.error(error.message || "Error fetching user details"); // Handle errors
-       }
-     };
-
+  const handleToggleMode = () => {
+    dispatch(toggleMode());
+  };
   return (
     <>
-      <Navbar fluid rounded>
+      <Navbar fluid rounded className="bg-blue-400 dark:bg-slate-900">
         <Navbar.Brand>
           <CgMenuLeftAlt
-            className="self-center text-2xl cursor-pointer"
+            className="self-center text-2xl cursor-pointer mr-2"
             onClick={() => setIsOpen(true)}
           />
-          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-            Flowbite React
+          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white" onClick={()=> { navigate('/dashboard')}}>
+            The Book Store
           </span>
         </Navbar.Brand>
+
         <div className="flex md:order-2">
+          <span
+            className="cursor-pointer flex items-center mr-4"
+            onClick={toggleMode}
+          >
+            {mode === "light" ? (
+              <LuMoon size={"20"} className="text-white" />
+            ) : (
+              <FaRegSun size={"20"} className="text-yellow-300" />
+            )}
+          </span>
           <Dropdown
             arrowIcon={false}
             inline
@@ -85,17 +103,14 @@ const SideBar = () => {
             }
           >
             <Dropdown.Header>
-              <span className="block text-sm">
-                {" "}
-                {userDetails?.data?.user?.name}
-              </span>
+              <span className="block text-sm"> {user?.data?.user?.name}</span>
               <span className="block truncate text-sm font-medium">
-                {userDetails?.data?.user?.email}
+                {user?.data?.user?.email}
               </span>
             </Dropdown.Header>
-            <Dropdown.Item>Dashboard</Dropdown.Item>
-            <Dropdown.Item>Settings</Dropdown.Item>
-            <Dropdown.Item>Earnings</Dropdown.Item>
+            <Dropdown.Item onClick={()=> { navigate('/dashboard')}} >Dashboard</Dropdown.Item>
+
+
             <Dropdown.Divider />
             <Dropdown.Item onClick={onLogout}>Sign out</Dropdown.Item>
           </Dropdown>
@@ -121,37 +136,18 @@ const SideBar = () => {
                 </form>
 
                 <Sidebar.Items>
-                  {userDetails?.data?.user?.role?.menus?.map((item, index) => (
+                  {user?.data?.user?.role?.menus?.map((item, index) => (
                     <Sidebar.ItemGroup key={index}>
                       <Sidebar.Item
                         icon={BiArrowFromLeft}
-                        component={Link}
+                        as={Link}
                         to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
                       >
                         {item}
                       </Sidebar.Item>
                     </Sidebar.ItemGroup>
                   ))}
-                  <Sidebar.ItemGroup>
-                    <Sidebar.Item
-                      href="https://github.com/themesberg/flowbite-react/"
-                      icon={HiClipboard}
-                    >
-                      Docs
-                    </Sidebar.Item>
-                    <Sidebar.Item
-                      href="https://flowbite-react.com/"
-                      icon={HiCollection}
-                    >
-                      Components
-                    </Sidebar.Item>
-                    <Sidebar.Item
-                      href="https://github.com/themesberg/flowbite-react/issues"
-                      icon={HiInformationCircle}
-                    >
-                      Help
-                    </Sidebar.Item>
-                  </Sidebar.ItemGroup>
+                  
                 </Sidebar.Items>
               </div>
             </div>

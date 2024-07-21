@@ -16,6 +16,8 @@ import PrivateRoute from "./Context/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import UserList from "./pages/UserList";
 import RoleList from "./pages/RoleList";
+import NotAuthorized from "./pages/NotAuthorized";
+import BookList from "./pages/BookList";
 
 function App() {
   return (
@@ -34,6 +36,9 @@ function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/user-management" element={<UserList />} />
                 <Route path="/role-management" element={<RoleList />} />
+                <Route path="/book-management" element={<BookList />} />
+              
+                <Route path="/not-authorized" element={<NotAuthorized />} />
                 {/* <Route path="/notifications" element={<Notification />} />
                             <Route path="/profile" element={<Profile />} />
                             <Route path="/reports" element={<Reports />} />
